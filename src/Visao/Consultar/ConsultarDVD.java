@@ -5,6 +5,14 @@
  */
 package Visao.Consultar;
 
+import DAO.Conexao;
+import DAO.DVDDAO;
+import Modelo.DVD;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Pedro Alcantara
@@ -17,6 +25,93 @@ public class ConsultarDVD extends javax.swing.JFrame {
     public ConsultarDVD() {
         initComponents();
         setLocationRelativeTo(this);
+        AtualizaTable();
+    }
+    private void AtualizaTable() {
+        Connection con = Conexao.AbrirConexao();
+        DVDDAO bd = new DVDDAO(con);
+        List<DVD> lista = new ArrayList<>();
+        lista = bd.ListarDVD();
+        DefaultTableModel tbm = 
+                (DefaultTableModel) tableC.getModel();
+        
+        while (tbm.getRowCount() > 0) {            
+            tbm.removeRow(0);
+        }
+        
+        int i = 0;
+        
+        for (DVD tab : lista) {
+            tbm.addRow(new String[i]);
+            tableC.setValueAt(tab.getCodigo(), i, 0);
+            tableC.setValueAt(tab.getCod_filme(), i, 1);
+            tableC.setValueAt(tab.getPreco(), i, 2);
+            tableC.setValueAt(tab.getData_compra(), i, 3);
+            tableC.setValueAt(tab.getSituacao(), i, 4);
+            i++;
+        }
+    
+        
+        Conexao.FecharConexao(con);
+    }
+    private void PesquisaNome() {
+        
+        String nome = nomeDVD.getText();
+        
+        Connection con = Conexao.AbrirConexao();
+        DVDDAO bd = new DVDDAO(con);
+        List<DVD> lista = new ArrayList<>();
+        lista = bd.Pesquisar_Nome_DVD(nome);
+        DefaultTableModel tbm = 
+                (DefaultTableModel) tableC.getModel();
+        
+        while (tbm.getRowCount() > 0) {            
+            tbm.removeRow(0);
+        }
+        
+        int i = 0;
+        
+        for (DVD tab : lista) {
+            tbm.addRow(new String[i]);
+            tableC.setValueAt(tab.getCodigo(), i, 0);
+            tableC.setValueAt(tab.getCod_filme(), i, 1);
+            tableC.setValueAt(tab.getPreco(), i, 2);
+            tableC.setValueAt(tab.getData_compra(), i, 3);
+            tableC.setValueAt(tab.getSituacao(), i, 4);
+            i++;
+        }
+        
+        Conexao.FecharConexao(con);
+    }
+    private void PesquisaCod() {
+        
+        String Cod = codDVD.getText();
+        int cod = Integer.parseInt(Cod);
+        
+        Connection con = Conexao.AbrirConexao();
+        DVDDAO bd = new DVDDAO(con);
+        List<DVD> lista = new ArrayList<>();
+        lista = bd.Pesquisar_Cod_DVD(cod);
+        DefaultTableModel tbm = 
+                (DefaultTableModel) tableC.getModel();
+        
+        while (tbm.getRowCount() > 0) {            
+            tbm.removeRow(0);
+        }
+        
+        int i = 0;
+        
+        for (DVD tab : lista) {
+            tbm.addRow(new String[i]);
+            tableC.setValueAt(tab.getCodigo(), i, 0);
+            tableC.setValueAt(tab.getCod_filme(), i, 1);
+            tableC.setValueAt(tab.getPreco(), i, 2);
+            tableC.setValueAt(tab.getData_compra(), i, 3);
+            tableC.setValueAt(tab.getSituacao(), i, 4);
+            i++;
+        }
+        
+        Conexao.FecharConexao(con);
     }
 
     /**
@@ -29,19 +124,19 @@ public class ConsultarDVD extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
+        tableC = new javax.swing.JTable();
+        nomeDVD = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        codDVD = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableC.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -49,17 +144,27 @@ public class ConsultarDVD extends javax.swing.JFrame {
                 "Código", "Código do Filme", "Preço da Compra", "Data da Compra", "Situação"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tableC);
 
         jLabel1.setText("Pesquisa por Código:");
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/pesquisar.jpg"))); // NOI18N
         jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Pesquisa por código do Flme:");
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/pesquisar.jpg"))); // NOI18N
         jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("TODOS");
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -80,13 +185,13 @@ public class ConsultarDVD extends javax.swing.JFrame {
                 .addGap(29, 29, 29)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nomeDVD, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(codDVD, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -110,8 +215,8 @@ public class ConsultarDVD extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(codDVD, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nomeDVD, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -126,6 +231,14 @@ public class ConsultarDVD extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        PesquisaNome();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        PesquisaCod();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -163,6 +276,7 @@ public class ConsultarDVD extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField codDVD;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -170,8 +284,7 @@ public class ConsultarDVD extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField nomeDVD;
+    private javax.swing.JTable tableC;
     // End of variables declaration//GEN-END:variables
 }

@@ -361,13 +361,6 @@ public class AlterarDVD extends javax.swing.JFrame {
             sql.Alterar_DVD(a);
             Conexao.FecharConexao(con);
 
-            codb.setText("");
-            jTF_Filme.setText("");
-            jTF_Preco.setText("");
-            jTF_Situacao.setText("");
-            jTF_Data.setText("");
-            comboFilme.setSelectedIndex(0);
-
 
             JOptionPane.showMessageDialog(null, "Informações atualizadas",
                 "Vídeo Locadora", JOptionPane.INFORMATION_MESSAGE);

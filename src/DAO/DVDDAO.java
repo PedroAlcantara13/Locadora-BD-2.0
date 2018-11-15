@@ -9,6 +9,7 @@ import Modelo.DVD;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,29 @@ import java.util.List;
 public class DVDDAO extends ExecuteSQL{
     public DVDDAO(Connection con) {
         super(con);
+    }
+    public List<DVD> ListarCodFilme(int cod){
+     String sql = "select idfilme from dvd where iddvd = "+ cod + "";
+     List<DVD> lista = new ArrayList<>();
+        try {
+            PreparedStatement ps = getCon().prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs != null) {
+                while (rs.next()) {
+                   DVD a = new DVD();
+                   a.setCod_filme(rs.getInt(1));
+                   
+                   lista.add(a);
+                }
+                return lista;
+            }else{
+                return null;
+            }
+        } catch (SQLException e) {
+            return null;
+        }
+     
     }
     public String Inserir_DVD(DVD a) {
         String sql = "insert into dvd values(0,?,?,?,?)";
@@ -81,8 +105,8 @@ public class DVDDAO extends ExecuteSQL{
     
     
  
-    public List<DVD> Pesquisar_Nome_DVD(int iddvd) {
-        String sql = "select iddvd,idfilme,preco_compra,data_compra,situacao" + "from dvd where iddvd Like '"+ iddvd + "%'";
+    public List<DVD> Pesquisar_Nome_DVD(String preco) {
+        String sql = "select iddvd,idfilme,preco_compra,data_compra,situacao" + "from dvd where iddvd Like '"+ preco + "%'";
         List<DVD> lista = new ArrayList<>();
         
         try {
@@ -239,7 +263,7 @@ public class DVDDAO extends ExecuteSQL{
     }
     
     public List<DVD> ListarComboDVD() {
-        String sql = "select titulo from dvd order by iddvd asc";
+        String sql = "select data_compra from dvd order by data_compra asc";
         List<DVD> lista = new ArrayList<>();
         
         try {
@@ -249,7 +273,7 @@ public class DVDDAO extends ExecuteSQL{
             if (rs != null) {
                 while (rs.next()) {                    
                     DVD a = new DVD();
-                    a.setCodigo(rs.getInt(1));
+                    a.setData_compra(rs.getString(1));
                     lista.add(a);
                 }
                 return lista;
@@ -261,8 +285,8 @@ public class DVDDAO extends ExecuteSQL{
         }
     }
     
-    public List<DVD> ConsultarCodigoDVD(int titulo) {
-        String sql = "select iddvd from dvd where iddvd = '" + titulo + "'";
+    public List<DVD> ConsultarCodigoDVD(String titulo) {
+        String sql = "select iddvd from dvd where data_compra = '" + titulo + "'";
         List<DVD> lista = new ArrayList<>();
         
         try {
@@ -285,12 +309,12 @@ public class DVDDAO extends ExecuteSQL{
     }
     
     public String Excluir_DVD(DVD a) {
-        String sql = "delete from  where iddvd = ? and idfilme = ? ";
+        String sql = "delete from dvd where iddvd = ? and data_compra = ? ";
         
         try {
             PreparedStatement ps = getCon().prepareStatement(sql);
             ps.setInt(1, a.getCodigo());
-            ps.setInt(2, a.getCod_filme());
+            ps.setString(2, a.getData_compra());
             
             if (ps.executeUpdate() > 0) {
                 return "Excluido com sucesso";

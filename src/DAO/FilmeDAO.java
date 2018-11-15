@@ -254,6 +254,7 @@ public class FilmeDAO extends ExecuteSQL{
             return null;
         }
     }
+
     
     public List<Filme> ConsultarCodigoFilme(String titulo) {
         String sql = "select idfilme from filme where titulo = '" + titulo + "'";
